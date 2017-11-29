@@ -19,7 +19,7 @@ package io.github.goodees.ese.example.gifts.boundary;
  *
  * @author patrik
  */
-public interface GiftList {
+public interface WishList {
     VerificationToken create(String firstParentName, String firstParentEmail);
     Parent verifyParent(String verificationToken);
     VerificationToken registerParent(String name, String email);

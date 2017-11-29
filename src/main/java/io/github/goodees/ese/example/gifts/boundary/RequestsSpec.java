@@ -17,13 +17,12 @@ package io.github.goodees.ese.example.gifts.boundary;
 
 import io.github.goodees.ese.core.Request;
 import org.immutables.value.Value.*;
-import io.github.goodees.ese.example.gifts.boundary.ValueObjects.Simple;
 
 /**
  *
  * @author patrik
  */
-interface RequestsSpec {
+class RequestsSpec {
 
     /**
      * This goes to null entity, and returns a new entity id.

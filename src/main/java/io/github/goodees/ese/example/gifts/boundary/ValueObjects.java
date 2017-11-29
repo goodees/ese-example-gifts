@@ -26,12 +26,7 @@ import org.immutables.value.Value;
  *
  * @author patrik
  */
-interface ValueObjects {
-    @Retention(RetentionPolicy.SOURCE)
-    @Value.Style(allMandatoryParameters = true, typeImmutable = "*")
-    @interface Simple {
-        
-    }
+class ValueObjects {
     @Simple @Immutable
     interface VerificationToken {
         String value();
@@ -42,8 +37,33 @@ interface ValueObjects {
         ParentId id();
         String name();
         String email();
-    }  
+    }
     
+    @Simple @Immutable
+    interface Child {
+        ChildId id();
+        String name();
+    }
+    
+    @Simple @Immutable
+    interface Wish {
+        WishId id();
+        ChildId child();
+        String content();
+        @Default
+        default boolean fulfilled() {
+            return false;
+        }
+    }
+    
+    @Simple @Immutable
+    interface Wishes {
+        Map<ChildId, Child> children();
+        List<Wish> wishes();
+    }
+}
+
+class IdObjects {
     @Simple @Immutable
     interface ChildId {
         String value();
@@ -57,24 +77,11 @@ interface ValueObjects {
     @Simple @Immutable
     interface ParentId {
         String value();
-    }
-    
-    @Simple @Immutable
-    interface Child {
-        ChildId id();
-        String name();
-    }
-    
-    @Simple @Immutable
-    interface Wish {
-        ChildId child();
-        String content();
-        boolean fulfilled();
-    }
-    
-    @Simple @Immutable
-    interface Wishes {
-        Map<ChildId, Child> children();
-        List<Wish> wishes();
-    }
+    }    
+}
+
+@Retention(RetentionPolicy.SOURCE)
+@Value.Style(allMandatoryParameters = true, typeImmutable = "*", visibility = Style.ImplementationVisibility.PUBLIC)
+@interface Simple {
+
 }
