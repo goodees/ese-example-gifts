@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.goodees.ese.example.gifts.event;
-
-import io.github.goodees.ese.core.EventSourcedEntity;
-import org.immutables.value.Value;
+package io.github.goodees.ese.example.gifts.boundary;
 
 /**
  *
  * @author patrik
  */
-@Value.Immutable
-public interface WishRegisteredEvent extends GiftEvent {
-    String id();
-    String childId();
-    String content();
-    
-    static Builder builder(EventSourcedEntity entity) {
-        return new Builder().from(entity);
-    }    
-    
-    class Builder extends ImmutableWishRegisteredEvent.Builder implements FromEntity<Builder> {
-        
-    }
+public interface GiftList {
+    VerificationToken create(String firstParentName, String firstParentEmail);
+    Parent verifyParent(String verificationToken);
+    VerificationToken registerParent(String name, String email);
+    ChildId registerChild(String name);
+    WishId registerWish(ChildId child, String content);
+    void changeWish(WishId wish, String content);
+    Wishes read();
 }

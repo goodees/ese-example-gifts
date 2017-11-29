@@ -29,8 +29,7 @@ public interface ChildRegisteredEvent extends GiftEvent {
     
     static Builder builder(EventSourcedEntity entity) {
         return new Builder().from(entity);
-    }
-    
+    } 
                 
     class Builder extends ImmutableChildRegisteredEvent.Builder implements FromEntity<Builder> {
         

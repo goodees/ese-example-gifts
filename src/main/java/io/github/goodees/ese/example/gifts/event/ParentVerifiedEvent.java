@@ -23,16 +23,13 @@ import org.immutables.value.Value;
  * @author patrik
  */
 @Value.Immutable
-public interface WishRegisteredEvent extends GiftEvent {
+public interface ParentVerifiedEvent extends GiftEvent {
     String id();
-    String childId();
-    String content();
     
     static Builder builder(EventSourcedEntity entity) {
         return new Builder().from(entity);
-    }    
+    }
     
-    class Builder extends ImmutableWishRegisteredEvent.Builder implements FromEntity<Builder> {
-        
+    class Builder extends ImmutableParentVerifiedEvent.Builder implements FromEntity<Builder> {
     }
 }
