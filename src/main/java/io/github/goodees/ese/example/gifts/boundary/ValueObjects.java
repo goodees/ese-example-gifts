@@ -27,67 +27,72 @@ import org.immutables.value.Value;
  * @author patrik
  */
 class ValueObjects {
-    @Simple @Immutable
-    interface VerificationToken {
+
+    @Immutable
+    @Prefixed
+    interface _VerificationToken {
         String value();
     }
 
-    @Simple @Immutable
-    interface Parent {
+    @Immutable
+    @Prefixed
+    interface _Parent {
         ParentId id();
         String name();
         String email();
     }
-    
-    @Simple @Immutable
-    interface Child {
+
+    @Immutable
+    @Prefixed
+    interface _Child {
         ChildId id();
         String name();
     }
-    
-    @Simple @Immutable
-    interface Wish {
+
+    @Immutable
+    @Prefixed
+    interface _Wish {
         WishId id();
         ChildId child();
         String content();
+
         @Default
         default boolean fulfilled() {
             return false;
         }
     }
-    
 
-}
-
-// hiding strategy here is almost perfect, but every degree of relations needs to be separated in a class.
-// We need something even better
-class CompoundValueObjects {
-    @Simple @Immutable
-    interface Wishes {
+    @Immutable(builder = true)
+    @Prefixed
+    interface _Wishes {
         Map<ChildId, Child> children();
         List<Wish> wishes();
-    }    
-}
+    }
 
-class IdObjects {
-    @Simple @Immutable
-    interface ChildId {
+    @Immutable
+    @Prefixed
+    interface _ChildId {
         String value();
     }
-    
-    @Simple @Immutable
-    interface WishId {
+
+    @Immutable
+    @Prefixed
+    interface _WishId {
         String value();
     }
-    
-    @Simple @Immutable
-    interface ParentId {
+
+    @Immutable
+    @Prefixed
+    interface _ParentId {
         String value();
-    }    
-}
+    }
 
-@Retention(RetentionPolicy.SOURCE)
-@Value.Style(allMandatoryParameters = true, typeImmutable = "*", visibility = Style.ImplementationVisibility.PUBLIC)
-@interface Simple {
+    @Retention(RetentionPolicy.SOURCE)
+    @Value.Style(allMandatoryParameters = true, typeAbstract = "_*",
+        // Generate without any suffix, just raw detected name
+        typeImmutable = "*", visibility = Style.ImplementationVisibility.PUBLIC,
+        defaults = @Immutable(builder = false))
+    @interface Prefixed {
 
+    }
 }

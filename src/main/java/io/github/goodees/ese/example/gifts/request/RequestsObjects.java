@@ -13,16 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.goodees.ese.example.gifts.boundary;
+package io.github.goodees.ese.example.gifts.request;
 
 import io.github.goodees.ese.core.Request;
+import io.github.goodees.ese.example.gifts.boundary.Parent;
+import io.github.goodees.ese.example.gifts.boundary.VerificationToken;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import org.immutables.value.Value.*;
 
 /**
  *
  * @author patrik
  */
-class RequestsSpec {
+class RequestsObjects {
+    
+    @Retention(RetentionPolicy.SOURCE)
+    @Style(allMandatoryParameters = true, typeImmutable = "*", visibility = Style.ImplementationVisibility.PUBLIC)
+    @interface Simple {
+
+    }
 
     /**
      * This goes to null entity, and returns a new entity id.
