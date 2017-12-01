@@ -74,6 +74,43 @@ public class WishListEntity extends ProxiedSyncEntity<WishList> {
             throw new UnsupportedOperationException("Not supported yet."); 
         }
     };
+    private final WishList parentRegistrationRequestHandler = new WishList() {
+        @Override
+        public VerificationToken create(String firstParentName, String firstParentEmail) {
+            throw new UnsupportedOperationException("Already created");
+        }
+
+        @Override
+        public Parent verifyParent(String verificationToken) {
+            return WishListEntity.this.verifyParent(verificationToken);
+        }
+
+        @Override
+        public VerificationToken registerParent(String name, String email) {
+            return WishListEntity.this.registerParent(name, email);
+        }
+
+        @Override
+        public ChildId registerChild(String name) {
+            throw new UnsupportedOperationException("Not yet registered");
+        }
+
+        @Override
+        public WishId registerWish(ChildId child, String content) {
+            throw new UnsupportedOperationException("Not yet registered");
+        }
+
+        @Override
+        public void changeWish(WishId wish, String content) {
+            throw new UnsupportedOperationException("Not yet registered");
+        }
+
+        @Override
+        public Wishes read() {
+            throw new UnsupportedOperationException("Not yet registered");
+        }
+        
+    };
     private final WishList openRequestHandler = new WishList() {
         @Override
         public VerificationToken create(String firstParentName, String firstParentEmail) {
@@ -133,7 +170,12 @@ public class WishListEntity extends ProxiedSyncEntity<WishList> {
 
     @Override
     protected void updateState(Event event) {
-        if (getStateVersion() > 0) {
+        if (getStateVersion() == 0) {
+            // after first event we wait for registration
+            requestHandler = parentRegistrationRequestHandler;
+        }
+        if (event instanceof ParentVerifiedEvent) {
+            // after first parent registers we offer all functionality;
             requestHandler = openRequestHandler;
         }
         parents.updateState(event);
