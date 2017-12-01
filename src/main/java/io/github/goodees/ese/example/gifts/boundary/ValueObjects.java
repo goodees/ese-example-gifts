@@ -56,11 +56,17 @@ class ValueObjects {
         }
     }
     
+
+}
+
+// hiding strategy here is almost perfect, but every degree of relations needs to be separated in a class.
+// We need something even better
+class CompoundValueObjects {
     @Simple @Immutable
     interface Wishes {
         Map<ChildId, Child> children();
         List<Wish> wishes();
-    }
+    }    
 }
 
 class IdObjects {
