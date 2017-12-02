@@ -15,6 +15,8 @@
  */
 package io.github.goodees.ese.example.gifts.boundary;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  *
  * @author patrik
@@ -27,4 +29,14 @@ public interface WishList {
     WishId registerWish(ChildId child, String content);
     void changeWish(WishId wish, String content);
     Wishes read();
+    
+    interface Async {
+        CompletableFuture<VerificationToken> create(String firstParentName, String firstParentEmail);
+        CompletableFuture<Parent> verifyParent(String verificationToken);
+        CompletableFuture<VerificationToken> registerParent(String name, String email);
+        CompletableFuture<ChildId> registerChild(String name);
+        CompletableFuture<WishId> registerWish(ChildId child, String content);
+        CompletableFuture<Void> changeWish(WishId wish, String content);
+        CompletableFuture<Wishes> read();
+    }
 }

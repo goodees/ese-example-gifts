@@ -29,14 +29,14 @@ import java.util.concurrent.ScheduledExecutorService;
  *
  * @author patrik
  */
-public class TestRuntime extends ProxiedSyncEventSourcingRuntime<WishListEntity, WishList>{
+public class TestRuntime extends ProxiedSyncEventSourcingRuntime.WithAsyncInterface<WishListEntity, WishList, WishList.Async> {
     InMemoryEventStore eventStore = new InMemoryEventStore();
     InMemorySnapshotStore snapshotStore = new InMemorySnapshotStore();
     ExecutorService executorService = Executors.newCachedThreadPool();
     ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     
     public TestRuntime() {
-        super(WishList.class);
+        super(WishList.class, WishList.Async.class);
     }
 
     @Override

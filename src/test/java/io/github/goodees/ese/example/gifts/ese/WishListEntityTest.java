@@ -22,6 +22,9 @@ import io.github.goodees.ese.example.gifts.boundary.Wish;
 import io.github.goodees.ese.example.gifts.boundary.WishId;
 import io.github.goodees.ese.example.gifts.boundary.WishList;
 import io.github.goodees.ese.example.gifts.boundary.Wishes;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -78,7 +81,21 @@ public class WishListEntityTest {
         Wish wish = contents.wishes().get(0);
         assertThat(wish.child()).isEqualTo(childId);
         assertThat(wish.id()).isEqualTo(wishId);
-    }    
+    } 
+    
+    @Test
+    public void registered_wish_can_be_read_async_chain() throws InterruptedException, ExecutionException, TimeoutException {
+        WishList.Async exec = runtime.executeAsync(name());
+        WishId wishId = exec.create("John Smith", "john@smith.com")
+                .thenCompose((token) -> exec.verifyParent(token.value()))
+                .thenCompose((p) -> exec.registerChild("Johny"))
+                .thenCompose((childId) -> exec.registerWish(childId, "RC Car"))
+                .get(2, TimeUnit.MILLISECONDS);
+                
+        Wishes contents = exec().read();
+        Wish wish = contents.wishes().get(0);
+        assertThat(wish.id()).isEqualTo(wishId);
+    }     
 
     private WishList exec() {
         return runtime.execute(name());
