@@ -28,6 +28,7 @@ import java.util.concurrent.TimeoutException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -41,26 +42,32 @@ public class WishListEntityTest {
     public TestName testName = new TestName();
     
     private TestRuntime runtime = new TestRuntime();
+    private WishList entity;
     
     private String name() {
         return testName.getMethodName();
+    }
+    
+    @Before
+    public void obtainHandler() {
+        entity = runtime.execute(name(), 5, TimeUnit.MILLISECONDS);
     }
     
     @Test
     public void kids_cannot_register_until_parent_verifies() {
         registerShouldFail();
         // so, create first.
-        VerificationToken token = exec().create("John Smith", "john@smith.com");
+        VerificationToken token = entity.create("John Smith", "john@smith.com");
         registerShouldFail();
-        exec().verifyParent(token.value());
-        ChildId child = exec().registerChild("Johny");
+        entity.verifyParent(token.value());
+        ChildId child = entity.registerChild("Johny");
         assertNotNull(child);
     }
     
     @Test
     public void kids_cannot_register_until_parent_verifies_with_event_replay() {
-        VerificationToken token = exec().create("John Smith", "john@smith.com");
-        exec().verifyParent(token.value());
+        VerificationToken token = entity.create("John Smith", "john@smith.com");
+        entity.verifyParent(token.value());
         // runtime (quite correctly) does not give us any interface to its working memory
         // so we create different runtime with same event store
         TestRuntime otherRuntime = new TestRuntime();
@@ -71,11 +78,11 @@ public class WishListEntityTest {
     
     @Test
     public void registered_wish_can_be_read() {
-        VerificationToken token = exec().create("John Smith", "john@smith.com");
-        exec().verifyParent(token.value());
-        ChildId childId = exec().registerChild("Johny");
-        WishId wishId = exec().registerWish(childId, "RC Car");
-        Wishes contents = exec().read();
+        VerificationToken token = entity.create("John Smith", "john@smith.com");
+        entity.verifyParent(token.value());
+        ChildId childId = entity.registerChild("Johny");
+        WishId wishId = entity.registerWish(childId, "RC Car");
+        Wishes contents = entity.read();
         assertThat(contents.children()).containsOnlyKeys(childId);
         Child child = contents.children().get(childId);
         Wish wish = contents.wishes().get(0);
@@ -85,25 +92,21 @@ public class WishListEntityTest {
     
     @Test
     public void registered_wish_can_be_read_async_chain() throws InterruptedException, ExecutionException, TimeoutException {
-        WishList.Async exec = runtime.executeAsync(name());
-        WishId wishId = exec.create("John Smith", "john@smith.com")
-                .thenCompose((token) -> exec.verifyParent(token.value()))
-                .thenCompose((p) -> exec.registerChild("Johny"))
-                .thenCompose((childId) -> exec.registerWish(childId, "RC Car"))
+        WishList.Async async = runtime.executeAsync(name());
+        WishId wishId = async.create("John Smith", "john@smith.com")
+                .thenCompose((token) -> async.verifyParent(token.value()))
+                .thenCompose((p) -> async.registerChild("Johny"))
+                .thenCompose((childId) -> async.registerWish(childId, "RC Car"))
                 .get(2, TimeUnit.MILLISECONDS);
                 
-        Wishes contents = exec().read();
+        Wishes contents = entity.read();
         Wish wish = contents.wishes().get(0);
         assertThat(wish.id()).isEqualTo(wishId);
     }     
 
-    private WishList exec() {
-        return runtime.execute(name());
-    }
-
     private void registerShouldFail() {
         try {
-            exec().registerChild("Johny");
+            entity.registerChild("Johny");
             fail("Should have failed");
         } catch (UnsupportedOperationException uoe  ) {
         }

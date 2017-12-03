@@ -16,7 +16,6 @@
 package io.github.goodees.ese.example.gifts.ese;
 
 import io.github.goodees.ese.core.Event;
-import io.github.goodees.ese.core.matching.TypeSwitch;
 import io.github.goodees.ese.core.store.EventStore;
 import io.github.goodees.ese.core.sync.ProxiedSyncEntity;
 import io.github.goodees.ese.example.gifts.boundary.ChildId;
