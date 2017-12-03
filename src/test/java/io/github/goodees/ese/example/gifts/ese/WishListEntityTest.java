@@ -50,7 +50,7 @@ public class WishListEntityTest {
     
     @Before
     public void obtainHandler() {
-        entity = runtime.execute(name(), 5, TimeUnit.MILLISECONDS);
+        entity = runtime.execute(name(), 500, TimeUnit.MILLISECONDS);
     }
     
     @Test
@@ -97,7 +97,7 @@ public class WishListEntityTest {
                 .thenCompose((token) -> async.verifyParent(token.value()))
                 .thenCompose((p) -> async.registerChild("Johny"))
                 .thenCompose((childId) -> async.registerWish(childId, "RC Car"))
-                .get(2, TimeUnit.MILLISECONDS);
+                .get(200, TimeUnit.MILLISECONDS);
                 
         Wishes contents = entity.read();
         Wish wish = contents.wishes().get(0);
